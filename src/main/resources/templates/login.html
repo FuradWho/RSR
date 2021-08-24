@@ -1,14 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-<form action="#" th:action="@{/login}" th:object="${UserInfo}" method="post">
-    <input type="text" th:field="*{username}" />
-    <input type="text" th:field="*{password}" />
-    <input type="submit" />
-</form>
-</body>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>登陆界面</title>
+        <link rel="stylesheet" href="../static/assets/css/bootstrap.min.css"/>
+        <script src="../static/assets/js/jquery.min.js"></script>
+        <script src="../static/assets/js/jsencrypt.js"></script>
+        <script src="../static/assets/js/jsencrypt.min.js"></script>
+    </head>
+    <body>
+        <div>
+            <form id="login-form">
+                <input type="text" name="username" id="username">
+                <input type="password" name="userpwd" id="userpwd">
+                <button type="button" id="btn-login"></button>
+            </form>
+
+        </div>
+    </body>
+
+    <script>
+
+        var publicKey;
+        var ind;
+        var encrypt = new JSEncrypt()
+
+        $(function(){
+            getPublcKey();
+            $("#btn-login").click(login);
+        });
+
+        function login() {
+            $.ajax(
+                {
+                    url:"/toLogin",
+                    type: "post",
+                    data: {
+                        account:$("#username").val(),
+                        pswd:encrypt.encrypt($("#userpwd").val()),
+                        index:ind,
+                    },
+                    success:function (result) {
+                        alert("helo")
+                    }
+                }
+            )
+        }
+
+        function getPublcKey() {
+
+            $.ajax({
+                url:'./getPublicKey',
+                type:'post',
+                data:{
+                },
+                dataType:'json',
+                success:function(resp){
+                    if(resp.success){
+                        publicKey = resp.map.key;
+                        ind = resp.map.index;
+                        encrypt.setPublicKey(publicKey)
+                    }
+                    else
+                        layer.msg("获取公钥失败");
+                }
+            })
+        }
+
+
+
+    </script>
 </html>

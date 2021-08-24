@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,9 +27,9 @@ public class testController {
     @Autowired
     private SysPermissionService sysPermissionService;
 
-    @GetMapping(value = "/test")
-    public List test(){
-        return sysPermissionService.findPermissionByRoleId(1);
+    @PostMapping(value = "/test")
+    public String test(){
+        return "2312";
     }
 
 }
