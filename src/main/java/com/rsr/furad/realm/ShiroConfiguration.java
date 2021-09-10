@@ -18,6 +18,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.handler.SimpleMappingExceptionResolver;
 import redis.clients.jedis.JedisPoolConfig;
+
 import java.util.*;
 
 /**
@@ -45,14 +46,13 @@ public class ShiroConfiguration {
     private int maxActive;
 
 
-
     @Bean
     public ShiroFilterFactoryBean shiroFilter(@Qualifier("securityManager") SecurityManager manager) {
 
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
         shiroFilterFactoryBean.setSecurityManager(manager);
 
-        Map<String,String> filterChainDefinitionMap = new LinkedHashMap<>();
+        Map<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
         filterChainDefinitionMap.put("/logout", "logout");
         filterChainDefinitionMap.put("/index", "anon");
         filterChainDefinitionMap.put("/", "anon");
@@ -67,12 +67,12 @@ public class ShiroConfiguration {
 
     @Bean("securityManager")
     public SecurityManager securityManager(@Qualifier("shiroRealm") ShiroRealm shiroRealm) {
-        DefaultWebSecurityManager securityManager  = new DefaultWebSecurityManager();
-        securityManager .setRealm(shiroRealm);
+        DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
+        securityManager.setRealm(shiroRealm);
         securityManager.setSessionManager(sessionManager());
         securityManager.setCacheManager(redisCacheManager());
         SecurityUtils.setSecurityManager(securityManager);
-        return securityManager ;
+        return securityManager;
     }
 
     @Bean("shiroRealm")
@@ -103,8 +103,7 @@ public class ShiroConfiguration {
     }
 
     @Bean
-    public SimpleMappingExceptionResolver resolver()
-    {
+    public SimpleMappingExceptionResolver resolver() {
         SimpleMappingExceptionResolver resolver = new SimpleMappingExceptionResolver();
         Properties properties = new Properties();
         properties.setProperty("org.apache.shiro.authz.UnauthorizedException", "/403");
@@ -113,18 +112,18 @@ public class ShiroConfiguration {
     }
 
     @Bean
-    public ShiroSessionIdGenerator sessionIdGenerator(){
+    public ShiroSessionIdGenerator sessionIdGenerator() {
         return new ShiroSessionIdGenerator();
     }
 
     @Bean
-    public RedisManager redisManager(){
+    public RedisManager redisManager() {
         RedisManager redisManager = new RedisManager();
-        redisManager.setHost(host+":"+ port);
+        redisManager.setHost(host + ":" + port);
         redisManager.setTimeout(timeout);
         redisManager.setPassword(password);
         JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
-        jedisPoolConfig.setMaxTotal(maxIdle+maxActive);
+        jedisPoolConfig.setMaxTotal(maxIdle + maxActive);
         jedisPoolConfig.setMaxIdle(maxIdle);
         jedisPoolConfig.setMinIdle(minIdle);
         redisManager.setJedisPoolConfig(jedisPoolConfig);
@@ -133,7 +132,7 @@ public class ShiroConfiguration {
 
 
     @Bean
-    public RedisCacheManager redisCacheManager(){
+    public RedisCacheManager redisCacheManager() {
         RedisCacheManager redisCacheManager = new RedisCacheManager();
         redisCacheManager.setRedisManager(redisManager());
         redisCacheManager.setKeyPrefix(CACHE_KEY);
@@ -158,8 +157,8 @@ public class ShiroConfiguration {
 
     /**
      * 配置Session管理器
-     * @Author Sans
      *
+     * @Author Sans
      */
     @Bean
     public SessionManager sessionManager() {
@@ -184,10 +183,11 @@ public class ShiroConfiguration {
 
     /**
      * 配置session监听
+     *
      * @return
      */
     @Bean("sessionListener")
-    public ShiroSessionListener sessionListener(){
+    public ShiroSessionListener sessionListener() {
         ShiroSessionListener sessionListener = new ShiroSessionListener();
         return sessionListener;
     }

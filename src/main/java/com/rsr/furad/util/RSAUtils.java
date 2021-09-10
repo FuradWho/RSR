@@ -29,43 +29,36 @@ public class RSAUtils {
      */
     public static final String KEY_ALGORITHM = "RSA";
 
-    /** */
     /**
      * 签名算法
      */
     public static final String SIGNATURE_ALGORITHM = "MD5withRSA";
 
-    /** */
     /**
      * 获取公钥的key
      */
     private static final String PUBLIC_KEY = "RSAPublicKey";
 
-    /** */
     /**
      * 获取私钥的key
      */
     private static final String PRIVATE_KEY = "RSAPrivateKey";
 
-    /** */
     /**
      * RSA最大加密明文大小
      */
     private static final int MAX_ENCRYPT_BLOCK = 117;
 
-    /** */
     /**
      * RSA最大解密密文大小
      */
     private static final int MAX_DECRYPT_BLOCK = 128;
 
-    /** */
     /**
      * RSA 位数 如果采用2048 上面最大加密和最大解密则须填写:  245 256
      */
     private static final int INITIALIZE_LENGTH = 1024;
 
-    /** */
     /**
      * <p>
      * 生成密钥对(公钥和私钥)
@@ -86,7 +79,6 @@ public class RSAUtils {
         return keyMap;
     }
 
-    /** */
     /**
      * <p>
      * 用私钥对信息生成数字签名
@@ -108,7 +100,6 @@ public class RSAUtils {
         return Base64.encodeBase64String(signature.sign());
     }
 
-    /** */
     /**
      * <p>
      * 校验数字签名
@@ -131,7 +122,6 @@ public class RSAUtils {
         return signature.verify(Base64.decodeBase64(sign));
     }
 
-    /** */
     /**
      * <P>
      * 私钥解密
@@ -170,7 +160,6 @@ public class RSAUtils {
         return decryptedData;
     }
 
-    /** */
     /**
      * <p>
      * 公钥解密
@@ -209,7 +198,6 @@ public class RSAUtils {
         return decryptedData;
     }
 
-    /** */
     /**
      * <p>
      * 公钥加密
@@ -249,7 +237,6 @@ public class RSAUtils {
         return encryptedData;
     }
 
-    /** */
     /**
      * <p>
      * 私钥加密
@@ -288,7 +275,6 @@ public class RSAUtils {
         return encryptedData;
     }
 
-    /** */
     /**
      * <p>
      * 获取私钥
@@ -303,7 +289,6 @@ public class RSAUtils {
         return Base64.encodeBase64String(key.getEncoded());
     }
 
-    /** */
     /**
      * <p>
      * 获取公钥

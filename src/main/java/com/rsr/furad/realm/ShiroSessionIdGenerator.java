@@ -11,7 +11,8 @@ import java.io.Serializable;
  */
 public class ShiroSessionIdGenerator implements SessionIdGenerator {
     /**
-     *实现SessionId生成
+     * 实现SessionId生成
+     *
      * @param session
      * @return
      */

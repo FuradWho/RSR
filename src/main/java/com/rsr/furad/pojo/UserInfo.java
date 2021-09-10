@@ -19,9 +19,9 @@ public class UserInfo {
     private String salt;
     private Integer state;
 
-    public String getCredentialsSalt(){
+    public String getCredentialsSalt() {
 
 
-        return this.username+this.salt;
+        return this.username + this.salt;
     }
 }
