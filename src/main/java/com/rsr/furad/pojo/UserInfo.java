@@ -20,6 +20,8 @@ public class UserInfo {
     private Integer state;
 
     public String getCredentialsSalt(){
+
+
         return this.username+this.salt;
     }
 }

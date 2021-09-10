@@ -28,7 +28,7 @@ public class testController {
     private SysPermissionService sysPermissionService;
 
     @PostMapping(value = "/test")
-    public String test(){
+    public String test() {
         return "2312";
     }
 

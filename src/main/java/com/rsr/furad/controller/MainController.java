@@ -24,25 +24,25 @@ public class MainController {
     private Getkey getKey;
 
 
-    @RequestMapping({"/","/index"})
-    public String index(){
+    @RequestMapping({"/", "/index"})
+    public String index() {
         return "index";
     }
 
     @RequestMapping("/login")
-    public String login(){
+    public String login() {
         return "login";
     }
 
     @RequestMapping("/toLogin")
     @ResponseBody
-    public JsonMsg toLogin(HttpServletRequest req, HttpServletResponse resp, Integer index){
+    public JsonMsg toLogin(HttpServletRequest req, HttpServletResponse resp, Integer index) {
         String userName = req.getParameter("account");
-        String userPswd = req.getParameter("pswd");
+        String userPwd = req.getParameter("pswd");
 
         try {
-            userPswd = new String(RSAUtils.decryptByPrivateKey(Base64.decodeBase64(userPswd),getKey.getPrivateKey(index)));
-            System.err.println(userPswd);
+            userPwd = new String(RSAUtils.decryptByPrivateKey(Base64.decodeBase64(userPwd), getKey.getPrivateKey(index)));
+            System.err.println(userPwd);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -54,20 +54,17 @@ public class MainController {
 
     @PostMapping("/getPublicKey")
     @ResponseBody
-    public JsonMsg getPublicKey(){
+    public JsonMsg getPublicKey() {
         JsonMsg jm = new JsonMsg();
         Random rd = new Random();
-        Integer index = rd.nextInt(5)+1;
+        Integer index = rd.nextInt(5) + 1;
         String key = getKey.getPublicKey(index);
-        if(null==key)
-        {
+        if (null == key) {
             jm.setSuccess(false);
-        }
-        else
-        {
+        } else {
             jm.setSuccess(true);
-            jm.getMap().put("key",key);
-            jm.getMap().put("index",index);
+            jm.getMap().put("key", key);
+            jm.getMap().put("index", index);
         }
         return jm;
     }
