@@ -1,13 +1,12 @@
 package com.rsr.furad.realm;
 
+import com.rsr.furad.config.MySimpleByteSource;
 import com.rsr.furad.mapper.SysPermissionMapper;
 import com.rsr.furad.mapper.SysRoleMapper;
 import com.rsr.furad.pojo.UserInfo;
 import com.rsr.furad.service.UserInfoService;
-import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authc.AuthenticationInfo;
-import org.apache.shiro.authc.AuthenticationToken;
-import org.apache.shiro.authc.SimpleAuthenticationInfo;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
@@ -30,20 +29,22 @@ public class ShiroRealm extends AuthorizingRealm {
     @Autowired
     private SysPermissionMapper sysPermissionMapper;
 
+    private SimpleAuthenticationInfo info = null;
+
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
 
         System.out.println("权限配置-->ShiroRealm.doGetAuthorizationInfo()");
         SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
-        UserInfo userInfo  = (UserInfo)principalCollection.getPrimaryPrincipal();
+        UserInfo userInfo = (UserInfo) principalCollection.getPrimaryPrincipal();
 
         sysRoleMapper.findRoleByUsername(userInfo.getUsername()).stream().forEach(
-                sysRole ->{
+                sysRole -> {
                     authorizationInfo.addRole(sysRole.get("role").toString());
-                    sysPermissionMapper.findPermissionByRoleId((Integer)sysRole.get("id")).stream().forEach(
-                          sysPermission ->{
-                              authorizationInfo.addStringPermission(sysPermission.get("permission").toString());
-                          }
+                    sysPermissionMapper.findPermissionByRoleId((Integer) sysRole.get("id")).stream().forEach(
+                            sysPermission -> {
+                                authorizationInfo.addStringPermission(sysPermission.get("permission").toString());
+                            }
                     );
                 }
         );
@@ -55,15 +56,31 @@ public class ShiroRealm extends AuthorizingRealm {
 
         System.out.println("认证配置-->MyShiroRealm.doGetAuthenticationInfo()");
 
-        String username = (String) authenticationToken.getPrincipal();
-        UserInfo userInfo = userInfoService.findByUsername(username);
+        // 将token装换成UsernamePasswordToken
+        UsernamePasswordToken upToken = (UsernamePasswordToken) authenticationToken;
 
-        if(userInfo == null){
-            return null;
+        String name = upToken.getUsername();
+
+        System.out.println(name);
+        UserInfo userInfo = userInfoService.findByName(name);
+
+        if (userInfo != null) {
+            // 如果查询到了，封装查询结果，返回给我们的调用
+            Object principal =  userInfo.getName();
+            Object credentials = userInfo.getPassword();
+
+            // 获取盐值，即用户名
+            ByteSource salt = new MySimpleByteSource(userInfo.getSalt());
+            String realmName = this.getName();
+
+            SecurityUtils.getSubject().getSession().setAttribute("currentLoginedUser", userInfo);
+
+            info = new SimpleAuthenticationInfo(principal,credentials,salt,realmName);
+        }else {
+            // 如果没有查询到，抛出一个异常
+            throw new AuthenticationException();
         }
 
-        SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo( userInfo,userInfo.getPassword(), ByteSource.Util.bytes(userInfo.getCredentialsSalt()),getName() );
-
-        return authenticationInfo;
+        return info;
     }
 }

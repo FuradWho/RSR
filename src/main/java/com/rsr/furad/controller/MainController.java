@@ -1,11 +1,15 @@
 package com.rsr.furad.controller;
 
 
+import com.rsr.furad.service.UserInfoService;
 import com.rsr.furad.util.Getkey;
 import com.rsr.furad.util.JsonMsg;
 import com.rsr.furad.util.RSAUtils;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.ibatis.annotations.Param;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +26,9 @@ public class MainController {
 
     @Autowired
     private Getkey getKey;
+
+    @Autowired
+    private UserInfoService userInfoService;
 
 
     @RequestMapping({"/", "/index"})
@@ -46,9 +53,37 @@ public class MainController {
         String userName = req.getParameter("account");
         String userPwd = req.getParameter("pswd");
 
+        JsonMsg jm = new JsonMsg();
+
         try {
             userPwd = new String(RSAUtils.decryptByPrivateKey(Base64.decodeBase64(userPwd), getKey.getPrivateKey(index)));
-            System.err.println(userPwd);
+            System.out.println(userName);
+            System.out.println(userPwd);
+            Subject subject = SecurityUtils.getSubject();
+            UsernamePasswordToken token = new UsernamePasswordToken(userName, userPwd);
+            subject.login(token);
+            jm.setSuccess(subject.isAuthenticated());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        return jm;
+
+    }
+
+    @RequestMapping("/toRegister")
+    @ResponseBody
+    public JsonMsg toRegister(HttpServletRequest req, HttpServletResponse resp, Integer index) {
+        String userName = req.getParameter("name");
+        String userPwd = req.getParameter("password");
+
+        try {
+            userPwd = new String(RSAUtils.decryptByPrivateKey(Base64.decodeBase64(userPwd), getKey.getPrivateKey(index)));
+
+            userInfoService.registerData(userName,userPwd);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -56,6 +91,7 @@ public class MainController {
         return jm;
 
     }
+
 
 
     @PostMapping("/getPublicKey")
