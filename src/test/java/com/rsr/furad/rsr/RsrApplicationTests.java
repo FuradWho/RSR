@@ -6,8 +6,9 @@ import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.io.File;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
+import java.util.concurrent.ArrayBlockingQueue;
 
 @SpringBootTest
 class RsrApplicationTests {
@@ -35,8 +36,22 @@ class RsrApplicationTests {
         //私钥解密
         byte[] decryptStr = RSAUtils.decryptByPrivateKey(Base64.decodeBase64(base64Sign),privateKeyStr);
         System.out.println("解密后的sign: "+new String(decryptStr));
+
     }
 
 
+    @Test
+    public void testIo() throws IOException {
+
+        BufferedReader bufferedReader =new BufferedReader(new InputStreamReader(System.in));
+        System.out.println(bufferedReader.readLine());
+
+        StringWriter stringWriter =new StringWriter();
+        stringWriter.write(2);
+
+
+        LinkedList list = new LinkedList();
+
+    }
 
 }

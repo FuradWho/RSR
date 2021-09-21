@@ -34,6 +34,12 @@ public class MainController {
         return "login";
     }
 
+
+    @RequestMapping("/register")
+    public String register() {
+        return "register";
+    }
+
     @RequestMapping("/toLogin")
     @ResponseBody
     public JsonMsg toLogin(HttpServletRequest req, HttpServletResponse resp, Integer index) {
